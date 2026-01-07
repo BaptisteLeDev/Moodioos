@@ -1,5 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unsafe-assignment */
-
 import {
   joinVoiceChannel as joinVoiceInternal,
   createAudioPlayer,
@@ -9,8 +7,11 @@ import {
   VoiceConnection,
   VoiceConnectionStatus,
   entersState,
+  StreamType,
 } from '@discordjs/voice';
-import type { VoiceAdapterCreator } from '@discordjs/voice';
+import type { DiscordGatewayAdapterCreator } from '@discordjs/voice';
+import path from 'path';
+import fs from 'fs';
 import { VoiceChannel, PermissionFlagsBits, ChannelType } from 'discord.js';
 
 type GuildVoiceState = {
@@ -45,12 +46,12 @@ export async function joinVoiceChannelSafe(voiceChannel: VoiceChannel) {
   // If already connected in this guild, reuse connection
   const guildId = voiceChannel.guild.id;
   const existing = connections.get(guildId);
-  if (existing && !existing.connection.destroyed) {
+  if (existing && !existing.connection.destroy) {
     return existing.connection;
   }
 
-  const adapter = (voiceChannel.guild as unknown as { voiceAdapterCreator?: VoiceAdapterCreator })
-    .voiceAdapterCreator;
+  const adapter = (voiceChannel.guild as unknown as { voiceAdapterCreator?: unknown })
+    .voiceAdapterCreator as DiscordGatewayAdapterCreator | undefined;
   if (!adapter) {
     throw new Error('Guild does not expose voiceAdapterCreator (unable to join voice)');
   }
@@ -105,7 +106,14 @@ export function playFileInGuild(guildId: string, filePath: string) {
     throw new Error('No active voice connection for guild');
   }
 
-  const resource = createAudioResource(filePath);
+  const ext = path.extname(filePath).toLowerCase();
+  if (ext !== '.opus' && ext !== '.ogg' && ext !== '.oga') {
+    throw new Error('Format audio non supporté: utilisez uniquement des fichiers .opus/.ogg');
+  }
+
+  const stream = fs.createReadStream(filePath);
+  const resource = createAudioResource(stream, { inputType: StreamType.OggOpus });
+
   const player = state.player ?? createAudioPlayer();
 
   player.play(resource);
@@ -155,5 +163,5 @@ export function destroyAllVoiceConnections() {
 
 export function isConnectedInGuild(guildId: string) {
   const s = connections.get(guildId);
-  return !!s && !s.connection.destroyed;
+  return !!s && !s.connection.destroy;
 }

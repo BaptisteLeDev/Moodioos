@@ -20,6 +20,9 @@ const EPHEMERAL_FLAG = 64;
 import { Command } from './types.js';
 import complimentsData from '../data/compliments.json' assert { type: 'json' };
 import musicData from '../data/music-recommendations.json' assert { type: 'json' };
+import { readdir } from 'fs/promises';
+import fs from 'fs';
+import path from 'path';
 import { joinVoiceChannelSafe, playFileInGuild } from '../services/index.js';
 
 type MusicRecommendation = {
@@ -78,37 +81,52 @@ export const moodCommand: Command = {
         ),
     )
     .addSubcommand((subcommand) =>
+      subcommand
+        .setName('play')
+        .setDescription('Play a sound from the bot sound library')
+        .addStringOption((option) =>
+          option
+            .setName('sound')
+            .setDescription('Name of the sound to play (leave empty to list)')
+            .setRequired(false),
+        ),
+    )
+    .addSubcommand((subcommand) =>
       subcommand.setName('join').setDescription('Make bot join your voice channel'),
     ),
 
-  async execute(interaction: ChatInputCommandInteraction) {
-    const subcommand = interaction.options.getSubcommand();
+  async execute(interaction: ChatInputCommandInteraction): Promise<void> {
+    const subcommand: string = interaction.options.getSubcommand();
 
     try {
       if (subcommand === 'want') {
-        const type = interaction.options.getString('type', true);
+        const type: string = interaction.options.getString('type', true);
         return handleWantSubcommand(interaction, type);
       }
 
       if (subcommand === 'music') {
-        const genre = interaction.options.getString('genre') ?? 'lofi';
+        const genre: string = interaction.options.getString('genre') ?? 'lofi';
         return handleMusicSubcommand(interaction, genre);
       }
 
       if (subcommand === 'say') {
-        const message = interaction.options.getString('message', true);
+        const message: string = interaction.options.getString('message', true);
         return handleSaySubcommand(interaction, message);
+      }
+
+      if (subcommand === 'play') {
+        const sound: string | null = interaction.options.getString('sound');
+        return handlePlaySubcommand(interaction, sound ?? undefined);
       }
 
       if (subcommand === 'join') {
         return handleJoinSubcommand(interaction);
       }
     } catch (error: unknown) {
-      const e = error instanceof Error ? error : new Error(String(error));
+      const e: Error = error instanceof Error ? error : new Error(String(error));
       console.error(`Error executing mood subcommand "${subcommand}":`, e);
       await interaction.reply({
         content: 'An error occurred while processing your request. 😢',
-        // use numeric flag for ephemeral response
         flags: EPHEMERAL_FLAG,
       });
     }
@@ -206,7 +224,18 @@ async function handleSaySubcommand(interaction: ChatInputCommandInteraction, mes
 
       await joinVoiceChannelSafe(voiceChannel as VoiceChannel);
       if (interaction.guildId) {
-        playFileInGuild(interaction.guildId, './src/assets/sounds/love.mp3');
+        const soundsDir = path.join(process.cwd(), 'src', 'assets', 'sounds');
+        const opusPath = path.join(soundsDir, 'love.opus');
+        if (!fs.existsSync(opusPath)) {
+          await interaction.followUp({
+            content:
+              "Aucun fichier '.opus' trouvé pour 'love' — ajoutez 'src/assets/sounds/love.opus'.",
+            flags: EPHEMERAL_FLAG,
+          });
+          return;
+        }
+
+        playFileInGuild(interaction.guildId, opusPath);
       }
     } catch (err: unknown) {
       const e = err instanceof Error ? err : new Error(String(err));
@@ -219,6 +248,93 @@ async function handleSaySubcommand(interaction: ChatInputCommandInteraction, mes
       } catch (followErr) {
         console.error('Failed to followUp after play error:', followErr);
       }
+    }
+  }
+}
+
+/**
+ * Handle /mood play subcommand
+ * - If `soundName` is provided, attempt to play it
+ * - Otherwise list available sounds
+ */
+async function handlePlaySubcommand(interaction: ChatInputCommandInteraction, soundName?: string) {
+  const soundsDir = path.join(process.cwd(), 'src', 'assets', 'sounds');
+
+  try {
+    const files = await readdir(soundsDir);
+    const soundFiles = files.filter((f) => {
+      const ext = path.extname(f).toLowerCase();
+      return ['.opus', '.ogg', '.oga'].includes(ext);
+    });
+
+    if (soundFiles.length === 0) {
+      await interaction.reply({
+        content: 'Aucun son trouvé dans le dossier sounds.',
+        flags: EPHEMERAL_FLAG,
+      });
+      return;
+    }
+
+    if (!soundName) {
+      // list available sounds
+      const list = soundFiles.map((f) => `- ${f}`).join('\n');
+      await interaction.reply({ content: `Fichiers disponibles:\n${list}`, flags: EPHEMERAL_FLAG });
+      return;
+    }
+
+    // Attempt to find matching file (allow name without extension)
+    const match = soundFiles.find((f) => f === soundName || path.parse(f).name === soundName);
+    if (!match) {
+      await interaction.reply({ content: `Son non trouvé: ${soundName}`, flags: EPHEMERAL_FLAG });
+      return;
+    }
+
+    // Ensure user is in voice
+    const member = interaction.member;
+    if (!member || !('voice' in member)) {
+      await interaction.reply({
+        content: "Impossible d'accéder à l'état vocal.",
+        flags: EPHEMERAL_FLAG,
+      });
+      return;
+    }
+
+    const voiceChannel = member.voice?.channel;
+    if (!voiceChannel) {
+      await interaction.reply({
+        content: 'Vous devez être dans un salon vocal pour que je joue un son.',
+        flags: EPHEMERAL_FLAG,
+      });
+      return;
+    }
+
+    await interaction.deferReply({ flags: EPHEMERAL_FLAG });
+    await joinVoiceChannelSafe(voiceChannel as VoiceChannel);
+    const filePath = path.join(soundsDir, match);
+    const ext = path.extname(filePath).toLowerCase();
+    if (!['.opus', '.ogg', '.oga'].includes(ext)) {
+      await interaction.editReply({
+        content: `Format non supporté: ${ext}. Seuls .opus/.ogg sont pris en charge.`,
+      });
+      return;
+    }
+
+    playFileInGuild(interaction.guildId as string, filePath);
+    await interaction.editReply({ content: `Lecture de **${match}** dans ${voiceChannel.name}` });
+  } catch (err: unknown) {
+    const e = err instanceof Error ? err : new Error(String(err));
+    console.error('Error in handlePlaySubcommand:', e);
+    try {
+      if (interaction.deferred || interaction.replied) {
+        await interaction.editReply({ content: `Erreur lors de la lecture: ${e.message}` });
+      } else {
+        await interaction.reply({
+          content: `Erreur lors de la lecture: ${e.message}`,
+          flags: EPHEMERAL_FLAG,
+        });
+      }
+    } catch (replyErr: unknown) {
+      console.error('Failed to notify user after play error:', replyErr);
     }
   }
 }
