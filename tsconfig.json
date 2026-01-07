@@ -1,6 +1,6 @@
 {
   "compilerOptions": {
-    "ignoreDeprecations": "6.0",
+    "ignoreDeprecations": "5.0",
     /* Language and Environment */
     "target": "ES2022",
     "lib": ["ES2022"],
