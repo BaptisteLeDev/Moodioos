@@ -1,0 +1,107 @@
+{
+  "ping": {
+    "description": "Tester la latence et le temps de réponse du bot",
+    "response": "🏓 Pong ! Latence : {latency}ms | Latence API : {apiLatency}ms"
+  },
+  "stats": {
+    "description": "Voir les statistiques et l'impact de Moodioos",
+    "title": "📊 Statistiques de Moodioos",
+    "embedDescription": "Métriques de performance et d'impact en direct",
+    "servers": "🏘️ Serveurs",
+    "serversValue": "{count} serveur",
+    "serversValuePlural": "{count} serveurs",
+    "users": "👥 Utilisateurs",
+    "usersValue": "{count} utilisateur",
+    "usersValuePlural": "{count} utilisateurs",
+    "uptime": "⏱️ Temps d'activité",
+    "uptimeValue": "{hours}h {minutes}m",
+    "impact": "🌍 Impact",
+    "impactValue": "Répandre la positivité à travers {count} communautés ! 💕",
+    "footer": "Répands les vibes ! 🌟"
+  },
+  "hug": {
+    "description": "Envoyer un câlin chaleureux à quelqu'un 🤗",
+    "optionUser": "Qui veux-tu câliner ?",
+    "selfHug": "Tu te fais un câlin à toi-même ! 🤗 C'est de l'amour-propre, et on adore ça !",
+    "noGifs": "Aucun GIF de câlin disponible pour le moment. Réessaie plus tard !",
+    "noTarget": "Tu dois spécifier un utilisateur ou un rôle à câliner !",
+    "roleRequest": "🤗 {user} cherche un câlin !",
+    "embedTitle": "🤗 {sender} envoie un câlin à {receiver} !",
+    "footer": "Des ondes chaleureuses en approche ! 💕"
+  },
+  "love": {
+    "description": "Envoyer de l'amour à quelqu'un 💕",
+    "optionUser": "À qui veux-tu envoyer de l'amour ?",
+    "selfLove": "S'aimer soi-même est important ! 💕 Garde cette énergie !",
+    "noGifs": "Aucun GIF d'amour disponible pour le moment. Réessaye plus tard !",
+    "embedTitle": "💕 {sender} envoie de l'amour à {receiver} !",
+    "footer": "Répands l'amour ! 💕"
+  },
+  "mood": {
+    "description": "Obtenir de la motivation, des recommandations musicales ou des fonctionnalités vocales",
+    "want": {
+      "description": "Recevoir un compliment motivant aléatoire",
+      "optionType": "Type de motivation",
+      "choiceCompliment": "💪 Compliment",
+      "choiceMusic": "🎵 Recommandation Musicale",
+      "embedTitle": "💪 Voici ton Compliment !",
+      "embedDefault": "Tu fais une différence dans la vie des gens ! 🌟",
+      "footer": "N'oublie pas, tu es incroyable !"
+    },
+    "music": {
+      "description": "Obtenir une recommandation musicale",
+      "optionGenre": "Genre/ambiance musicale",
+      "choiceLofi": "Lofi Hip Hop",
+      "choiceJazz": "Lo-Fi Jazz",
+      "choiceIndie": "Indie Pop",
+      "noRecommendations": "Aucune recommandation trouvée pour le genre : {genre}",
+      "noAvailable": "Aucune recommandation musicale disponible pour le moment. Réessaie plus tard !",
+      "embedTitle": "{emoji} RECOMMANDATION {name}",
+      "fieldArtists": "🎤 Artistes",
+      "fieldVibe": "✨ Ambiance",
+      "footer": "Profite de la musique ! 🎧"
+    },
+    "say": {
+      "description": "Faire dire quelque chose de spécial au bot",
+      "optionMessage": "Quoi dire",
+      "choiceLove": "💕 Je t'aime",
+      "embedTitle": "Je t'aime",
+      "embedDescription": "**Je t'aime... 💕**",
+      "footer": "Un message rempli d'amour pour toi !",
+      "noOpusFile": "Aucun fichier '.opus' trouvé pour 'love' — ajoutez 'src/assets/sounds/love.opus'.",
+      "noSoundsInFolder": "Aucun son trouvé dans le dossier : {folder}",
+      "audioError": "❌ Impossible de lire l'audio : {error}"
+    },
+    "play": {
+      "description": "Jouer un son de la bibliothèque de sons du bot",
+      "optionSound": "Nom du son à jouer (laisser vide pour lister)",
+      "noSounds": "Aucun son trouvé dans le dossier sounds.",
+      "availableSounds": "Fichiers disponibles :\n{list}",
+      "soundNotFound": "Son non trouvé : {sound}",
+      "noVoiceState": "Impossible d'accéder à l'état vocal.",
+      "notInVoice": "Vous devez être dans un salon vocal pour que je joue un son.",
+      "unsupportedFormat": "Format non supporté : {ext}. Seuls .opus/.ogg sont pris en charge.",
+      "nowPlaying": "Lecture de **{sound}** dans {channel}",
+      "playError": "Erreur lors de la lecture : {error}"
+    },
+    "join": {
+      "description": "Faire rejoindre le bot dans votre salon vocal",
+      "noVoiceState": "❌ Impossible d'accéder à l'état vocal !",
+      "notInVoice": "❌ Vous devez être dans un salon vocal pour que je puisse rejoindre !",
+      "joined": "✅ J'ai rejoint **{channel}** ! 🎵",
+      "joinError": "❌ Échec de la connexion au salon vocal. Assurez-vous que j'ai la permission !"
+    },
+    "config": {
+      "description": "Configurer les paramètres de Moodioos pour ce serveur",
+      "lang": {
+        "description": "Définir la langue du bot pour ce serveur",
+        "optionLanguage": "Langue (en ou fr)",
+        "optionLanguageDesc": "Choisissez la langue pour les réponses du bot",
+        "noPermission": "❌ Vous avez besoin de la permission **Administrateur** pour configurer le bot !",
+        "invalidLanguage": "❌ Langue invalide ! Choisissez 'en' (English) ou 'fr' (Français).",
+        "success": "✅ Langue du serveur définie à **{language}** 🌍",
+        "currentLanguage": "Langue actuelle du serveur : **{language}**"
+      }
+    }
+  }
+}

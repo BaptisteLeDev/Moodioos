@@ -104,7 +104,7 @@ Currently JSON-based, future PostgreSQL migration planned.
 **Current Storage:**
 - `compliments.json` - Motivational messages
 - `music-recommendations.json` - Music suggestions with metadata
-- `hug-gifs.json` - Hug GIF URLs
+- `gifs.json` - Hug GIF URLs
 
 **Future Database Schema** (Supabase):
 - `users` - Discord user info

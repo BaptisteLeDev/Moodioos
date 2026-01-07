@@ -133,7 +133,7 @@ Moodioos/
 │   ├── data/                  # JSON data storage
 │   │   ├── compliments.json   # Motivational messages
 │   │   ├── music-recommendations.json
-│   │   └── hug-gifs.json      # Hug GIF URLs
+│   │   └── gifs.json      # Hug GIF URLs
 │   ├── assets/
 │   │   └── sounds/            # MP3 files (for voice features)
 │   ├── types/                 # Global TypeScript types

@@ -1,0 +1,107 @@
+{
+  "ping": {
+    "description": "Test bot latency and response time",
+    "response": "🏓 Pong! Latency: {latency}ms | API Latency: {apiLatency}ms"
+  },
+  "stats": {
+    "description": "View Moodioos statistics and impact",
+    "title": "📊 Moodioos Statistics",
+    "embedDescription": "Live bot performance and impact metrics",
+    "servers": "🏘️ Servers",
+    "serversValue": "{count} server",
+    "serversValuePlural": "{count} servers",
+    "users": "👥 Users",
+    "usersValue": "{count} user",
+    "usersValuePlural": "{count} users",
+    "uptime": "⏱️ Uptime",
+    "uptimeValue": "{hours}h {minutes}m",
+    "impact": "🌍 Impact",
+    "impactValue": "Spreading positivity across {count} communities! 💕",
+    "footer": "Spread the vibes! 🌟"
+  },
+  "hug": {
+    "description": "Send a warm hug to someone 🤗",
+    "optionUser": "Who do you want to hug?",
+    "selfHug": "You are hugging yourself! 🤗 That's self-love, and we love that!",
+    "noGifs": "No hug GIFs available right now. Please try again later!",
+    "noTarget": "You need to specify a user or role to hug!",
+    "roleRequest": "🤗 {user} is looking for a hug!",
+    "embedTitle": "🤗 {sender} sends a hug to {receiver}!",
+    "footer": "Warm vibes incoming! 💕"
+  },
+  "love": {
+    "description": "Send love to someone 💕",
+    "optionUser": "Who do you want to send love to?",
+    "selfLove": "Loving yourself is important! 💕 Keep that energy!",
+    "noGifs": "No love GIFs available right now. Please try again later!",
+    "embedTitle": "💕 {sender} sends love to {receiver}!",
+    "footer": "Spread the love! 💕"
+  },
+  "mood": {
+    "description": "Get motivation, music recommendations, or voice features",
+    "want": {
+      "description": "Get a random motivational compliment",
+      "optionType": "Type of motivation",
+      "choiceCompliment": "💪 Compliment",
+      "choiceMusic": "🎵 Music Recommendation",
+      "embedTitle": "💪 Here is your Compliment!",
+      "embedDefault": "You make a difference in people's lives! 🌟",
+      "footer": "Remember, you are amazing!"
+    },
+    "music": {
+      "description": "Get a music recommendation",
+      "optionGenre": "Music genre/vibe",
+      "choiceLofi": "Lofi Hip Hop",
+      "choiceJazz": "Lo-Fi Jazz",
+      "choiceIndie": "Indie Pop",
+      "noRecommendations": "No recommendations found for genre: {genre}",
+      "noAvailable": "No music recommendations available right now. Please try again later!",
+      "embedTitle": "{emoji} {name} RECOMMENDATION",
+      "fieldArtists": "🎤 Artists",
+      "fieldVibe": "✨ Vibe",
+      "footer": "Enjoy the music! 🎧"
+    },
+    "say": {
+      "description": "Make bot say something special",
+      "optionMessage": "What to say",
+      "choiceLove": "💕 I love you",
+      "embedTitle": "Je t'aime",
+      "embedDescription": "**I love you... 💕**",
+      "footer": "A message full of love for you!",
+      "noOpusFile": "No '.opus' file found for 'love' — add 'src/assets/sounds/love.opus'.",
+      "noSoundsInFolder": "No sounds found in folder: {folder}",
+      "audioError": "❌ Unable to play audio: {error}"
+    },
+    "play": {
+      "description": "Play a sound from the bot sound library",
+      "optionSound": "Name of the sound to play (leave empty to list)",
+      "noSounds": "No sounds found in the sounds folder.",
+      "availableSounds": "Available files:\n{list}",
+      "soundNotFound": "Sound not found: {sound}",
+      "noVoiceState": "Unable to access voice state.",
+      "notInVoice": "You must be in a voice channel for me to play a sound.",
+      "unsupportedFormat": "Unsupported format: {ext}. Only .opus/.ogg are supported.",
+      "nowPlaying": "Now playing **{sound}** in {channel}",
+      "playError": "Error during playback: {error}"
+    },
+    "join": {
+      "description": "Make bot join your voice channel",
+      "noVoiceState": "❌ Unable to access voice state!",
+      "notInVoice": "❌ You need to be in a voice channel for me to join!",
+      "joined": "✅ Joined **{channel}**! 🎵",
+      "joinError": "❌ Failed to join voice channel. Make sure I have permission!"
+    },
+    "config": {
+      "description": "Configure Moodioos settings for this server",
+      "lang": {
+        "description": "Set the bot's language for this server",
+        "optionLanguage": "Language (en or fr)",
+        "optionLanguageDesc": "Choose the language for bot responses",
+        "noPermission": "❌ You need **Administrator** permission to configure the bot!",
+        "invalidLanguage": "❌ Invalid language! Choose 'en' (English) or 'fr' (Français).",
+        "success": "✅ Server language set to **{language}** 🌍",
+        "currentLanguage": "Current server language: **{language}**"
+      }
+    }
+  }
+}

@@ -171,7 +171,7 @@ Go to your bot settings → Bot → Privileged Gateway Intents:
 
 - **Edit Compliments**: `src/data/compliments.json`
 - **Edit Music Recs**: `src/data/music-recommendations.json`
-- **Edit Hug GIFs**: `src/data/hug-gifs.json`
+- **Edit Hug GIFs**: `src/data/gifs.json`
 
 ### Deployment
 

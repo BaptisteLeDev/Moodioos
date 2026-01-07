@@ -1,0 +1,31 @@
+{
+  "hugs": [
+"https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExd251dGc4NW1kMmx2MHl2YW41bHoxdHZobmMzM2RycTY5MWZzbmNzayZlcD12MV9naWZzX3NlYXJjaCZjdD1n/7Wcyq7KvKFNTO/giphy.gif",
+"https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExd251dGc4NW1kMmx2MHl2YW41bHoxdHZobmMzM2RycTY5MWZzbmNzayZlcD12MV9naWZzX3NlYXJjaCZjdD1n/EvYHHSntaIl5m/giphy.gif",
+"https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExd251dGc4NW1kMmx2MHl2YW41bHoxdHZobmMzM2RycTY5MWZzbmNzayZlcD12MV9naWZzX3NlYXJjaCZjdD1n/hRCFBt3ta0DJeGto2R/giphy.gif",
+"https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExd251dGc4NW1kMmx2MHl2YW41bHoxdHZobmMzM2RycTY5MWZzbmNzayZlcD12MV9naWZzX3NlYXJjaCZjdD1n/1JmGiBtqTuehfYxuy9/giphy.gif",
+"https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExd251dGc4NW1kMmx2MHl2YW41bHoxdHZobmMzM2RycTY5MWZzbmNzayZlcD12MV9naWZzX3NlYXJjaCZjdD1n/f9EmXxglhdhAj1bo28/giphy.gif",
+"https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExd251dGc4NW1kMmx2MHl2YW41bHoxdHZobmMzM2RycTY5MWZzbmNzayZlcD12MV9naWZzX3NlYXJjaCZjdD1n/IzXiddo2twMmdmU8Lv/giphy.gif",
+"https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExd251dGc4NW1kMmx2MHl2YW41bHoxdHZobmMzM2RycTY5MWZzbmNzayZlcD12MV9naWZzX3NlYXJjaCZjdD1n/2GDHOfqcmYIX6/giphy.gif",
+"https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExd251dGc4NW1kMmx2MHl2YW41bHoxdHZobmMzM2RycTY5MWZzbmNzayZlcD12MV9naWZzX3NlYXJjaCZjdD1n/Yle9Yz9izeVRyiwavn/giphy.gif",
+"https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExd251dGc4NW1kMmx2MHl2YW41bHoxdHZobmMzM2RycTY5MWZzbmNzayZlcD12MV9naWZzX3NlYXJjaCZjdD1n/ddk1FDgb2AHSw/giphy.gif",
+"https://media.giphy.com/media/v1.Y2lkPWVjZjA1ZTQ3NzN3amV3bng5bWhjbWsxN3didDY4ZXAzMXprM2NicGQ2Y2lwMWFpdyZlcD12MV9naWZzX3NlYXJjaCZjdD1n/VbawWIGNtKYwOFXF7U/giphy.gif",
+"https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExd251dGc4NW1kMmx2MHl2YW41bHoxdHZobmMzM2RycTY5MWZzbmNzayZlcD12MV9naWZzX3NlYXJjaCZjdD1n/Lb3vIJjaSIQWA/giphy.gif",
+"https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExd251dGc4NW1kMmx2MHl2YW41bHoxdHZobmMzM2RycTY5MWZzbmNzayZlcD12MV9naWZzX3NlYXJjaCZjdD1n/Gf54zTxt2QKru/giphy.gif",
+"https://media.giphy.com/media/v1.Y2lkPWVjZjA1ZTQ3NzN3amV3bng5bWhjbWsxN3didDY4ZXAzMXprM2NicGQ2Y2lwMWFpdyZlcD12MV9naWZzX3NlYXJjaCZjdD1n/qFmdpUKAFZ6rMobzzu/giphy.gif",
+"https://media.giphy.com/media/v1.Y2lkPWVjZjA1ZTQ3NzN3amV3bng5bWhjbWsxN3didDY4ZXAzMXprM2NicGQ2Y2lwMWFpdyZlcD12MV9naWZzX3NlYXJjaCZjdD1n/Ia8kJNoC3Iv0OoyeES/giphy.gif",
+"https://media.giphy.com/media/v1.Y2lkPWVjZjA1ZTQ3MjRhMm5kMjZwdjBnNmVyMXExNzVta3RsdXJyaDhhbmg3NGtoYW1nciZlcD12MV9naWZzX3NlYXJjaCZjdD1n/chpVje4XVoDLnDQ7XJ/giphy.gif",
+"https://media.giphy.com/media/v1.Y2lkPWVjZjA1ZTQ3azRkNDg5cmZ3ZTQ2eGlvcWVlZWM0amh2b3RrdGxtNjhmd2U4OWVsMyZlcD12MV9naWZzX3NlYXJjaCZjdD1n/0OgdJVNjbcIifqSb7U/giphy.gif",
+"https://media.giphy.com/media/v1.Y2lkPWVjZjA1ZTQ3MGdpNml4MjFjbnU0dzRydjBtenIyOWd1eG8yZmsyMGpmc3d5MTM4dSZlcD12MV9naWZzX3NlYXJjaCZjdD1n/YYRlCWDgUEkYcleu8J/giphy.gif",
+"https://media.giphy.com/media/v1.Y2lkPWVjZjA1ZTQ3azRkNDg5cmZ3ZTQ2eGlvcWVlZWM0amh2b3RrdGxtNjhmd2U4OWVsMyZlcD12MV9naWZzX3NlYXJjaCZjdD1n/d9eL06htb5Vks/giphy.gif",
+"https://media.giphy.com/media/v1.Y2lkPWVjZjA1ZTQ3azRkNDg5cmZ3ZTQ2eGlvcWVlZWM0amh2b3RrdGxtNjhmd2U4OWVsMyZlcD12MV9naWZzX3NlYXJjaCZjdD1n/9Y1LEFKsbbP4hrLgV3/giphy.gif",
+"https://media.giphy.com/media/v1.Y2lkPWVjZjA1ZTQ3azRkNDg5cmZ3ZTQ2eGlvcWVlZWM0amh2b3RrdGxtNjhmd2U4OWVsMyZlcD12MV9naWZzX3NlYXJjaCZjdD1n/ytTylBw1jRfMYTHwV7/giphy.gif"
+
+  ],
+  "love": [
+"https://media.giphy.com/media/v1.Y2lkPWVjZjA1ZTQ3MGdpNml4MjFjbnU0dzRydjBtenIyOWd1eG8yZmsyMGpmc3d5MTM4dSZlcD12MV9naWZzX3NlYXJjaCZjdD1n/WOORRezUTVbs9iST3f/giphy.gif",
+"https://media.giphy.com/media/v1.Y2lkPWVjZjA1ZTQ3MGdpNml4MjFjbnU0dzRydjBtenIyOWd1eG8yZmsyMGpmc3d5MTM4dSZlcD12MV9naWZzX3NlYXJjaCZjdD1n/WP1Z0FfnuMuXqPvDlj/giphy.gif",
+"https://media.giphy.com/media/v1.Y2lkPWVjZjA1ZTQ3azRkNDg5cmZ3ZTQ2eGlvcWVlZWM0amh2b3RrdGxtNjhmd2U4OWVsMyZlcD12MV9naWZzX3NlYXJjaCZjdD1n/bXdCNfnZ9n2QG9MXEn/giphy.gif"
+
+  ]
+}
