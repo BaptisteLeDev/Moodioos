@@ -37,6 +37,9 @@ async function main() {
     path.join(distRoot, 'assets', 'sounds')
   );
 
+  // Copy locales for i18n
+  await copyDir(path.join(projectRoot, 'src', 'locales'), path.join(distRoot, 'locales'));
+
   console.log('✅ Assets copied to dist');
 }
 
