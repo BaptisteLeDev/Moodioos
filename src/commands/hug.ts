@@ -35,6 +35,12 @@ export const hugCommand: Command = {
     }
 
     const randomGif = gifs[Math.floor(Math.random() * gifs.length)];
+    if (!randomGif) {
+      await interaction.reply({
+        content: 'No hug GIFs available right now. Please try again later!',
+      });
+      return;
+    }
 
     const embed = new EmbedBuilder()
       .setColor('#FFB6C1')
