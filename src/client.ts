@@ -21,6 +21,8 @@ import {
   ChatInputCommandInteraction,
   ClientOptions,
 } from 'discord.js';
+
+const EPHEMERAL_FLAG = 64;
 import { config } from './config.js';
 import { Command } from './commands/types.js';
 import { commands as registeredCommands } from './commands/index.js';
@@ -258,7 +260,7 @@ export class BotClient extends Client {
   ): Promise<void> {
     const reply = {
       content: `❌ ${message}`,
-      ephemeral: true,
+      flags: EPHEMERAL_FLAG,
     };
 
     try {

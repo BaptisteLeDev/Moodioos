@@ -8,10 +8,19 @@
  * - join: Make bot join voice channel
  */
 
-import { SlashCommandBuilder, ChatInputCommandInteraction, EmbedBuilder } from 'discord.js';
+import {
+  SlashCommandBuilder,
+  ChatInputCommandInteraction,
+  EmbedBuilder,
+  VoiceChannel,
+  ChannelType,
+} from 'discord.js';
+
+const EPHEMERAL_FLAG = 64;
 import { Command } from './types.js';
 import complimentsData from '../data/compliments.json' assert { type: 'json' };
 import musicData from '../data/music-recommendations.json' assert { type: 'json' };
+import { joinVoiceChannelSafe, playFileInGuild } from '../services/index.js';
 
 type MusicRecommendation = {
   name: string;
@@ -94,11 +103,13 @@ export const moodCommand: Command = {
       if (subcommand === 'join') {
         return handleJoinSubcommand(interaction);
       }
-    } catch (error) {
-      console.error(`Error executing mood subcommand "${subcommand}":`, error);
+    } catch (error: unknown) {
+      const e = error instanceof Error ? error : new Error(String(error));
+      console.error(`Error executing mood subcommand "${subcommand}":`, e);
       await interaction.reply({
         content: 'An error occurred while processing your request. 😢',
-        ephemeral: true,
+        // use numeric flag for ephemeral response
+        flags: EPHEMERAL_FLAG,
       });
     }
   },
@@ -135,7 +146,7 @@ async function handleMusicSubcommand(interaction: ChatInputCommandInteraction, g
   if (recommendations.length === 0) {
     await interaction.reply({
       content: `No recommendations found for genre: ${genre}`,
-      ephemeral: true,
+      flags: EPHEMERAL_FLAG,
     });
     return;
   }
@@ -144,7 +155,7 @@ async function handleMusicSubcommand(interaction: ChatInputCommandInteraction, g
   if (!randomRec) {
     await interaction.reply({
       content: 'No music recommendations available right now. Please try again later!',
-      ephemeral: true,
+      flags: EPHEMERAL_FLAG,
     });
     return;
   }
@@ -177,7 +188,38 @@ async function handleSaySubcommand(interaction: ChatInputCommandInteraction, mes
       .setFooter({ text: 'A message full of love for you!' });
 
     await interaction.reply({ embeds: [embed] });
-    // TODO: Play MP3 file if bot is in voice channel
+    // Try to play the MP3 file: join if needed then play
+    try {
+      const member = interaction.member;
+      const voiceChannel = member && 'voice' in member ? member.voice?.channel : null;
+      if (!voiceChannel) {
+        // nothing to do, user not in voice
+        return;
+      }
+
+      if (
+        voiceChannel.type !== ChannelType.GuildVoice &&
+        voiceChannel.type !== ChannelType.GuildStageVoice
+      ) {
+        return;
+      }
+
+      await joinVoiceChannelSafe(voiceChannel as VoiceChannel);
+      if (interaction.guildId) {
+        playFileInGuild(interaction.guildId, './src/assets/sounds/love.mp3');
+      }
+    } catch (err: unknown) {
+      const e = err instanceof Error ? err : new Error(String(err));
+      console.error('Error during playFile:', e);
+      try {
+        await interaction.followUp({
+          content: '❌ Unable to play audio: ' + e.message,
+          flags: EPHEMERAL_FLAG,
+        });
+      } catch (followErr) {
+        console.error('Failed to followUp after play error:', followErr);
+      }
+    }
   }
 }
 
@@ -190,7 +232,7 @@ async function handleJoinSubcommand(interaction: ChatInputCommandInteraction) {
   if (!member || !('voice' in member)) {
     await interaction.reply({
       content: '❌ Unable to access voice state!',
-      ephemeral: true,
+      flags: EPHEMERAL_FLAG,
     });
     return;
   }
@@ -200,23 +242,41 @@ async function handleJoinSubcommand(interaction: ChatInputCommandInteraction) {
   if (!voiceChannel) {
     await interaction.reply({
       content: '❌ You need to be in a voice channel for me to join!',
-      ephemeral: true,
+      flags: EPHEMERAL_FLAG,
     });
     return;
   }
 
   try {
-    // TODO: Connect to voice channel using @discordjs/voice
-    await interaction.reply({
-      content: `✅ Joining **${voiceChannel.name ?? 'voice channel'}**! 🎵`,
-      ephemeral: false,
+    await interaction.deferReply({ flags: EPHEMERAL_FLAG });
+    if (
+      voiceChannel.type !== ChannelType.GuildVoice &&
+      voiceChannel.type !== ChannelType.GuildStageVoice
+    ) {
+      throw new Error('Target channel is not a voice/stage channel');
+    }
+
+    await joinVoiceChannelSafe(voiceChannel as VoiceChannel);
+    await interaction.editReply({
+      content: `✅ Joined **${voiceChannel.name ?? 'voice channel'}**! 🎵`,
     });
   } catch (error: unknown) {
-    const err = error instanceof Error ? error : new Error('Unknown error');
+    const err = error instanceof Error ? error : new Error(String(error));
     console.error('Error joining voice channel:', err);
-    await interaction.reply({
-      content: '❌ Failed to join voice channel. Make sure I have permission!',
-      ephemeral: true,
-    });
+    // If already deferred/replied, edit reply; otherwise send a new ephemeral reply
+    try {
+      if (interaction.deferred || interaction.replied) {
+        await interaction.editReply({
+          content: '❌ Failed to join voice channel. Make sure I have permission!',
+        });
+      } else {
+        await interaction.reply({
+          content: '❌ Failed to join voice channel. Make sure I have permission!',
+          flags: EPHEMERAL_FLAG,
+        });
+      }
+    } catch (replyErr: unknown) {
+      console.error('Failed to notify user about join error:', replyErr);
+    }
   }
 }

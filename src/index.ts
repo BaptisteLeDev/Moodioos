@@ -14,6 +14,7 @@
 import { bot } from './client.js';
 import { createApiServer } from './api/server.js';
 import { config, validateConfig } from './config.js';
+import { destroyAllVoiceConnections } from './services/index.js';
 
 /**
  * Bootstrap Application
@@ -71,6 +72,14 @@ function setupGracefulShutdown() {
     console.log(`\n⚠️  Received ${signal}, shutting down gracefully...`);
 
     try {
+      // First destroy voice resources (players + connections)
+      try {
+        destroyAllVoiceConnections();
+        console.log('✅ Voice connections destroyed');
+      } catch (vErr) {
+        console.error('Error destroying voice resources:', vErr);
+      }
+
       // Destroy Discord client connection
       await bot.destroy();
       console.log('✅ Discord bot disconnected');
@@ -96,13 +105,13 @@ function setupGracefulShutdown() {
   // Handle uncaught exceptions
   process.on('uncaughtException', (err) => {
     console.error('❌ Uncaught Exception:', err);
-    process.exit(1);
+    void shutdown('uncaughtException');
   });
 
   // Handle unhandled promise rejections
   process.on('unhandledRejection', (reason, promise) => {
     console.error('❌ Unhandled Rejection at:', promise, 'reason:', reason);
-    process.exit(1);
+    void shutdown('unhandledRejection');
   });
 }
 
