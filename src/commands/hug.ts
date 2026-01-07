@@ -27,6 +27,13 @@ export const hugCommand: Command = {
     }
 
     const gifs = hugGifsData.hugs;
+    if (!gifs.length) {
+      await interaction.reply({
+        content: 'No hug GIFs available right now. Please try again later!',
+      });
+      return;
+    }
+
     const randomGif = gifs[Math.floor(Math.random() * gifs.length)];
 
     const embed = new EmbedBuilder()

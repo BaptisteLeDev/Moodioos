@@ -13,6 +13,14 @@ import { Command } from './types.js';
 import complimentsData from '../data/compliments.json' assert { type: 'json' };
 import musicData from '../data/music-recommendations.json' assert { type: 'json' };
 
+type MusicRecommendation = {
+  name: string;
+  description: string;
+  artists: string[];
+  vibe: string;
+  emoji: string;
+};
+
 export const moodCommand: Command = {
   data: new SlashCommandBuilder()
     .setName('mood')
@@ -107,7 +115,7 @@ async function handleWantSubcommand(interaction: ChatInputCommandInteraction, ty
     const embed = new EmbedBuilder()
       .setColor('#FF69B4')
       .setTitle('💪 Here is your Compliment!')
-      .setDescription(randomCompliment)
+      .setDescription(randomCompliment ?? 'You are awesome! 🌟')
       .setFooter({ text: 'Remember, you are amazing!' });
 
     await interaction.reply({ embeds: [embed] });
@@ -120,7 +128,7 @@ async function handleWantSubcommand(interaction: ChatInputCommandInteraction, ty
  * Handle /mood music subcommand
  */
 async function handleMusicSubcommand(interaction: ChatInputCommandInteraction, genre: string) {
-  const recommendations = musicData.recommendations.filter((rec) =>
+  const recommendations = (musicData.recommendations as MusicRecommendation[]).filter((rec) =>
     rec.name.toLowerCase().includes(genre.toLowerCase()),
   );
 
@@ -133,6 +141,13 @@ async function handleMusicSubcommand(interaction: ChatInputCommandInteraction, g
   }
 
   const randomRec = recommendations[Math.floor(Math.random() * recommendations.length)];
+  if (!randomRec) {
+    await interaction.reply({
+      content: 'No music recommendations available right now. Please try again later!',
+      ephemeral: true,
+    });
+    return;
+  }
 
   const embed = new EmbedBuilder()
     .setColor('#1DB954')
