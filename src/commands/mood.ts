@@ -27,6 +27,7 @@ const musicData = require('../data/music-recommendations.json') as unknown as Mu
 import { readdir } from 'fs/promises';
 import fs from 'fs';
 import path from 'path';
+import { fileURLToPath } from 'url';
 import { joinVoiceChannelSafe, playFileInGuild } from '../services/index.js';
 
 type MusicRecommendation = {
@@ -228,7 +229,11 @@ async function handleSaySubcommand(interaction: ChatInputCommandInteraction, mes
 
       await joinVoiceChannelSafe(voiceChannel as VoiceChannel);
       if (interaction.guildId) {
-        const soundsDir = path.join(process.cwd(), 'src', 'assets', 'sounds');
+        const currentFileDir = path.dirname(fileURLToPath(import.meta.url));
+        const distRoot = path.resolve(currentFileDir, '..');
+        const soundsDist = path.join(distRoot, 'assets', 'sounds');
+        const soundsSrc = path.join(distRoot, '..', 'src', 'assets', 'sounds');
+        const soundsDir = fs.existsSync(soundsDist) ? soundsDist : soundsSrc;
         const opusPath = path.join(soundsDir, 'love.opus');
         if (!fs.existsSync(opusPath)) {
           await interaction.followUp({
@@ -262,7 +267,14 @@ async function handleSaySubcommand(interaction: ChatInputCommandInteraction, mes
  * - Otherwise list available sounds
  */
 async function handlePlaySubcommand(interaction: ChatInputCommandInteraction, soundName?: string) {
-  const soundsDir = path.join(process.cwd(), 'src', 'assets', 'sounds');
+  // Defer immediately to avoid interaction timeout
+  await interaction.deferReply({ flags: EPHEMERAL_FLAG });
+
+  const currentFileDir = path.dirname(fileURLToPath(import.meta.url));
+  const distRoot = path.resolve(currentFileDir, '..');
+  const soundsDist = path.join(distRoot, 'assets', 'sounds');
+  const soundsSrc = path.join(distRoot, '..', 'src', 'assets', 'sounds');
+  const soundsDir = fs.existsSync(soundsDist) ? soundsDist : soundsSrc;
 
   try {
     const files = await readdir(soundsDir);
@@ -272,9 +284,8 @@ async function handlePlaySubcommand(interaction: ChatInputCommandInteraction, so
     });
 
     if (soundFiles.length === 0) {
-      await interaction.reply({
+      await interaction.editReply({
         content: 'Aucun son trouvé dans le dossier sounds.',
-        flags: EPHEMERAL_FLAG,
       });
       return;
     }
@@ -282,38 +293,34 @@ async function handlePlaySubcommand(interaction: ChatInputCommandInteraction, so
     if (!soundName) {
       // list available sounds
       const list = soundFiles.map((f) => `- ${f}`).join('\n');
-      await interaction.reply({ content: `Fichiers disponibles:\n${list}`, flags: EPHEMERAL_FLAG });
+      await interaction.editReply({ content: `Fichiers disponibles:\n${list}` });
       return;
     }
 
     // Attempt to find matching file (allow name without extension)
     const match = soundFiles.find((f) => f === soundName || path.parse(f).name === soundName);
     if (!match) {
-      await interaction.reply({ content: `Son non trouvé: ${soundName}`, flags: EPHEMERAL_FLAG });
+      await interaction.editReply({ content: `Son non trouvé: ${soundName}` });
       return;
     }
 
     // Ensure user is in voice
     const member = interaction.member;
     if (!member || !('voice' in member)) {
-      await interaction.reply({
+      await interaction.editReply({
         content: "Impossible d'accéder à l'état vocal.",
-        flags: EPHEMERAL_FLAG,
       });
       return;
     }
 
     const voiceChannel = member.voice?.channel;
     if (!voiceChannel) {
-      await interaction.reply({
+      await interaction.editReply({
         content: 'Vous devez être dans un salon vocal pour que je joue un son.',
-        flags: EPHEMERAL_FLAG,
       });
       return;
     }
 
-    await interaction.deferReply({ flags: EPHEMERAL_FLAG });
-    await joinVoiceChannelSafe(voiceChannel as VoiceChannel);
     const filePath = path.join(soundsDir, match);
     const ext = path.extname(filePath).toLowerCase();
     if (!['.opus', '.ogg', '.oga'].includes(ext)) {
@@ -323,20 +330,14 @@ async function handlePlaySubcommand(interaction: ChatInputCommandInteraction, so
       return;
     }
 
+    await joinVoiceChannelSafe(voiceChannel as VoiceChannel);
     playFileInGuild(interaction.guildId as string, filePath);
     await interaction.editReply({ content: `Lecture de **${match}** dans ${voiceChannel.name}` });
   } catch (err: unknown) {
     const e = err instanceof Error ? err : new Error(String(err));
     console.error('Error in handlePlaySubcommand:', e);
     try {
-      if (interaction.deferred || interaction.replied) {
-        await interaction.editReply({ content: `Erreur lors de la lecture: ${e.message}` });
-      } else {
-        await interaction.reply({
-          content: `Erreur lors de la lecture: ${e.message}`,
-          flags: EPHEMERAL_FLAG,
-        });
-      }
+      await interaction.editReply({ content: `Erreur lors de la lecture: ${e.message}` });
     } catch (replyErr: unknown) {
       console.error('Failed to notify user after play error:', replyErr);
     }
@@ -347,28 +348,28 @@ async function handlePlaySubcommand(interaction: ChatInputCommandInteraction, so
  * Handle /mood join subcommand
  */
 async function handleJoinSubcommand(interaction: ChatInputCommandInteraction) {
-  const member = interaction.member;
-  // Ensure the interaction has a guild member with voice state
-  if (!member || !('voice' in member)) {
-    await interaction.reply({
-      content: '❌ Unable to access voice state!',
-      flags: EPHEMERAL_FLAG,
-    });
-    return;
-  }
-
-  const voiceChannel = member.voice?.channel;
-
-  if (!voiceChannel) {
-    await interaction.reply({
-      content: '❌ You need to be in a voice channel for me to join!',
-      flags: EPHEMERAL_FLAG,
-    });
-    return;
-  }
+  // Defer immediately to avoid interaction timeout
+  await interaction.deferReply({ flags: EPHEMERAL_FLAG });
 
   try {
-    await interaction.deferReply({ flags: EPHEMERAL_FLAG });
+    const member = interaction.member;
+    // Ensure the interaction has a guild member with voice state
+    if (!member || !('voice' in member)) {
+      await interaction.editReply({
+        content: '❌ Unable to access voice state!',
+      });
+      return;
+    }
+
+    const voiceChannel = member.voice?.channel;
+
+    if (!voiceChannel) {
+      await interaction.editReply({
+        content: '❌ You need to be in a voice channel for me to join!',
+      });
+      return;
+    }
+
     if (
       voiceChannel.type !== ChannelType.GuildVoice &&
       voiceChannel.type !== ChannelType.GuildStageVoice
@@ -383,18 +384,10 @@ async function handleJoinSubcommand(interaction: ChatInputCommandInteraction) {
   } catch (error: unknown) {
     const err = error instanceof Error ? error : new Error(String(error));
     console.error('Error joining voice channel:', err);
-    // If already deferred/replied, edit reply; otherwise send a new ephemeral reply
     try {
-      if (interaction.deferred || interaction.replied) {
-        await interaction.editReply({
-          content: '❌ Failed to join voice channel. Make sure I have permission!',
-        });
-      } else {
-        await interaction.reply({
-          content: '❌ Failed to join voice channel. Make sure I have permission!',
-          flags: EPHEMERAL_FLAG,
-        });
-      }
+      await interaction.editReply({
+        content: '❌ Failed to join voice channel. Make sure I have permission!',
+      });
     } catch (replyErr: unknown) {
       console.error('Failed to notify user about join error:', replyErr);
     }

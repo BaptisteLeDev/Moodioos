@@ -22,6 +22,10 @@ export const hugCommand: Command = {
   async execute(interaction: ChatInputCommandInteraction) {
     const targetUser = interaction.options.getUser('user', true);
 
+    // Validate immediately and respond fast
+    const gifs = hugGifsData.hugs;
+    const randomGif = gifs.length > 0 ? gifs[Math.floor(Math.random() * gifs.length)] : undefined;
+
     if (targetUser.id === interaction.user.id) {
       await interaction.reply({
         content: "You are hugging yourself! 🤗 That's self-love, and we love that!",
@@ -29,15 +33,6 @@ export const hugCommand: Command = {
       return;
     }
 
-    const gifs = hugGifsData.hugs;
-    if (!gifs.length) {
-      await interaction.reply({
-        content: 'No hug GIFs available right now. Please try again later!',
-      });
-      return;
-    }
-
-    const randomGif = gifs[Math.floor(Math.random() * gifs.length)];
     if (!randomGif) {
       await interaction.reply({
         content: 'No hug GIFs available right now. Please try again later!',
