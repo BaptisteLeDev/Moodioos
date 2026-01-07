@@ -6,7 +6,10 @@
 
 import { SlashCommandBuilder, ChatInputCommandInteraction, EmbedBuilder } from 'discord.js';
 import { Command } from './types.js';
-import hugGifsData from '../data/hug-gifs.json' assert { type: 'json' };
+import { createRequire } from 'module';
+const require = createRequire(import.meta.url);
+type HugGifsData = { hugs: string[] };
+const hugGifsData = require('../data/hug-gifs.json') as unknown as HugGifsData;
 
 export const hugCommand: Command = {
   data: new SlashCommandBuilder()

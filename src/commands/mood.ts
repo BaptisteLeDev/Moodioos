@@ -18,8 +18,12 @@ import {
 
 const EPHEMERAL_FLAG = 64;
 import { Command } from './types.js';
-import complimentsData from '../data/compliments.json' assert { type: 'json' };
-import musicData from '../data/music-recommendations.json' assert { type: 'json' };
+import { createRequire } from 'module';
+const require = createRequire(import.meta.url);
+type ComplimentsData = { compliments: string[] };
+type MusicData = { recommendations: MusicRecommendation[] };
+const complimentsData = require('../data/compliments.json') as unknown as ComplimentsData;
+const musicData = require('../data/music-recommendations.json') as unknown as MusicData;
 import { readdir } from 'fs/promises';
 import fs from 'fs';
 import path from 'path';
@@ -157,7 +161,7 @@ async function handleWantSubcommand(interaction: ChatInputCommandInteraction, ty
  * Handle /mood music subcommand
  */
 async function handleMusicSubcommand(interaction: ChatInputCommandInteraction, genre: string) {
-  const recommendations = (musicData.recommendations as MusicRecommendation[]).filter((rec) =>
+  const recommendations = musicData.recommendations.filter((rec) =>
     rec.name.toLowerCase().includes(genre.toLowerCase()),
   );
 

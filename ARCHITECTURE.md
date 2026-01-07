@@ -133,6 +133,22 @@ dotenv.config({ path: path.resolve(__dirname, '../.env') });
 
 **CRITICAL:** Always use `__dirname`, never `process.cwd()`
 
+### JSON Loading in ESM (Runtime Compatibility)
+
+Some Node.js deployments may not support import attributes for JSON (e.g., `assert { type: 'json' }`).
+
+**Pattern:** Use `createRequire(import.meta.url)` to load JSON in ESM modules.
+
+```typescript
+import { createRequire } from 'module';
+const require = createRequire(import.meta.url);
+
+type ComplimentsData = { compliments: string[] };
+const complimentsData: ComplimentsData = require('../data/compliments.json');
+```
+
+This avoids syntax errors at runtime while keeping TypeScript types explicit.
+
 ## 🔄 Bootstrap Sequence
 
 **STRICT ORDER** (defined in `src/index.ts`):
