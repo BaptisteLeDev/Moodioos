@@ -1,0 +1,53 @@
+{
+  "recommendations": [
+    {
+      "name": "lofi",
+      "description": "👾 Lofi Hip Hop - Beats to Relax/Study",
+      "artists": ["ChilledCow", "Various"],
+      "vibe": "Chill, Studying, Focus, Relaxation",
+      "emoji": "🎧"
+    },
+    {
+      "name": "lofi",
+      "description": "☕ Lofi Café Ambiance - Cozy Vibes",
+      "artists": ["lofi girl", "Various"],
+      "vibe": "Cozy, Rainy Day, Reading",
+      "emoji": "☕"
+    },
+    {
+      "name": "lofi",
+      "description": "🌙 Late Night Lofi - Chill Evening",
+      "artists": ["NCS", "Various"],
+      "vibe": "Night Chill, Relaxation, Wind Down",
+      "emoji": "🌙"
+    },
+    {
+      "name": "lofi",
+      "description": "🌊 Ocean Waves + Lofi - Nature Sounds",
+      "artists": ["Ambient Lofi", "Various"],
+      "vibe": "Peaceful, Nature, Meditation",
+      "emoji": "🌊"
+    },
+    {
+      "name": "lofi",
+      "description": "☁️ Cloud Dreams - Dreamy Lofi",
+      "artists": ["Lofi Cloud", "Various"],
+      "vibe": "Dreamy, Peaceful, Imagination",
+      "emoji": "☁️"
+    },
+    {
+      "name": "lo-fi jazz",
+      "description": "🎺 Lo-Fi Jazz - Smooth & Mellow",
+      "artists": ["Biased", "Various"],
+      "vibe": "Smooth, Jazz, Sophisticated",
+      "emoji": "🎺"
+    },
+    {
+      "name": "indie pop",
+      "description": "🎵 Indie Pop Comfort - Feel Good Music",
+      "artists": ["Various Indie Artists"],
+      "vibe": "Happy, Uplifting, Good Vibes",
+      "emoji": "🎵"
+    }
+  ]
+}
