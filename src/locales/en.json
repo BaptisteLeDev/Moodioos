@@ -28,6 +28,9 @@
     "noTarget": "You need to specify a user or role to hug!",
     "roleRequest": "🤗 {user} is looking for a hug!",
     "embedTitle": "🤗 {sender} sends a hug to {receiver}!",
+    "requestAnnouncement": "is ready for a hug!",
+    "acceptedTitle": "🤗 Cuddle accepted!",
+    "acceptedDescription": "{sender} gives a hug to {receiver}!",
     "footer": "Warm vibes incoming! 💕"
   },
   "love": {
@@ -49,9 +52,11 @@
       "optionType": "Type of motivation",
       "choiceCompliment": "💪 Compliment",
       "choiceMusic": "🎵 Music Recommendation",
-      "embedTitle": "💪 Here is your Compliment!",
+      "choiceHug": "🤗 Hug",
       "embedDefault": "You make a difference in people's lives! 🌟",
-      "footer": "Remember, you are amazing!"
+      "footer": "Remember, you are amazing!",
+      "hugAnnouncement": "wants a hug — use `/hug @user` to accept!",
+      "hugFooter": "Use /hug @user to accept the hug request"
     },
     "music": {
       "description": "Get a music recommendation",

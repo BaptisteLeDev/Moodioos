@@ -33,6 +33,7 @@ import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import { joinVoiceChannelSafe, playFileInGuild, leaveVoiceInGuild } from '../services/index.js';
+import { addHugRequest } from '../services/hug-requests.js';
 
 type MusicRecommendation = {
   name: string;
@@ -67,6 +68,7 @@ export const moodCommand: Command = {
             .addChoices(
               { name: '💪 Compliment', value: 'compliment' },
               { name: '🎵 Music Recommendation', value: 'music' },
+              { name: '🤗 Hug', value: 'hug' },
             ),
         ),
     )
@@ -89,27 +91,6 @@ export const moodCommand: Command = {
               { name: 'Lofi Hip Hop', value: 'lofi' },
               { name: 'Lo-Fi Jazz', value: 'lo-fi jazz' },
               { name: 'Indie Pop', value: 'indie pop' },
-            ),
-        ),
-    )
-    .addSubcommand((subcommand) =>
-      subcommand
-        .setName('say')
-        .setDescription('Make bot say something special')
-        .setDescriptionLocalizations({
-          fr: 'Faire dire quelque chose de spécial au bot',
-        })
-        .addStringOption((option) =>
-          option
-            .setName('message')
-            .setDescription('What to say')
-            .setDescriptionLocalizations({
-              fr: 'Quoi dire',
-            })
-            .setRequired(true)
-            .addChoices(
-              { name: '💕 I love you', value: 'love' },
-              { name: '💪 Motivation boost', value: 'motivation' },
             ),
         ),
     )
@@ -243,11 +224,30 @@ async function handleWantSubcommand(interaction: ChatInputCommandInteraction, ty
     const compliments = complimentsData.compliments;
     const randomCompliment = compliments[Math.floor(Math.random() * compliments.length)];
 
+    // Put the compliment directly as the embed content (short & nicer)
     const embed = new EmbedBuilder()
       .setColor('#FF69B4')
-      .setTitle(t(locale, 'mood.want.embedTitle'))
       .setDescription(randomCompliment ?? t(locale, 'mood.want.embedDefault'))
       .setFooter({ text: t(locale, 'mood.want.footer') });
+
+    await interaction.reply({ embeds: [embed] });
+  } else if (type === 'hug') {
+    // Announce that the user wants a hug and register the request
+    const guildId = interaction.guildId;
+    const userMention = `<@${interaction.user.id}>`;
+
+    if (guildId) {
+      try {
+        addHugRequest(guildId, interaction.user.id);
+      } catch (err) {
+        console.error('Failed to register hug request:', err);
+      }
+    }
+
+    const embed = new EmbedBuilder()
+      .setColor('#FFB6C1')
+      .setDescription(`${userMention} ${t(locale, 'mood.want.hugAnnouncement')}`)
+      .setFooter({ text: t(locale, 'mood.want.hugFooter') });
 
     await interaction.reply({ embeds: [embed] });
   } else if (type === 'music') {

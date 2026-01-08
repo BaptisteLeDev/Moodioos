@@ -28,6 +28,9 @@
     "noTarget": "Tu dois spécifier un utilisateur ou un rôle à câliner !",
     "roleRequest": "🤗 {user} cherche un câlin !",
     "embedTitle": "🤗 {sender} envoie un câlin à {receiver} !",
+    "requestAnnouncement": "est prêt(e) pour un câlin !",
+    "acceptedTitle": "🤗 Câlin accepté !",
+    "acceptedDescription": "{sender} fait un câlin à {receiver} !",
     "footer": "Des ondes chaleureuses en approche ! 💕"
   },
   "love": {

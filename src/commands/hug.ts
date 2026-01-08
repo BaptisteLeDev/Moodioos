@@ -8,6 +8,7 @@ import { SlashCommandBuilder, ChatInputCommandInteraction, EmbedBuilder } from '
 import { Command } from './types.js';
 import { createRequire } from 'module';
 import { getLocale, t } from '../utils/i18n.js';
+import { addHugRequest, hasHugRequest, removeHugRequest } from '../services/hug-requests.js';
 
 const require = createRequire(import.meta.url);
 type HugGifsData = { hugs: string[] };
@@ -81,27 +82,63 @@ export const hugCommand: Command = {
       return;
     }
 
-    // If no user and no role specified
-    if (!targetUser) {
-      await interaction.reply({
-        content: t(locale, 'hug.noTarget'),
-        flags: 64,
-      });
+    // If no user and no role specified -> announce that the user is ready for a hug
+    if (!targetUser && !targetRole) {
+      // register hug request
+      const guildId = interaction.guildId;
+      if (guildId) {
+        addHugRequest(guildId, interaction.user.id);
+      }
+
+      const embed = new EmbedBuilder()
+        .setColor('#FFB6C1')
+        .setDescription(t(locale, 'hug.requestAnnouncement', { user: interaction.user.username }))
+        .setImage(randomGif)
+        .setFooter({ text: t(locale, 'hug.footer') });
+
+      await interaction.reply({ embeds: [embed] });
       return;
     }
 
     // Send hug to user
-    const embed = new EmbedBuilder()
-      .setColor('#FFB6C1')
-      .setTitle(
-        t(locale, 'hug.embedTitle', {
-          sender: interaction.user.username,
-          receiver: targetUser.username,
-        }),
-      )
-      .setImage(randomGif)
-      .setFooter({ text: t(locale, 'hug.footer') });
+    if (targetUser) {
+      const guildId = interaction.guildId;
+      if (guildId) {
+        if (hasHugRequest(guildId, targetUser.id)) {
+          // Accept the pending request
+          removeHugRequest(guildId, targetUser.id);
 
-    await interaction.reply({ embeds: [embed] });
+          const embedAccepted = new EmbedBuilder()
+            .setColor('#FFB6C1')
+            .setTitle(t(locale, 'hug.acceptedTitle'))
+            .setDescription(
+              t(locale, 'hug.acceptedDescription', {
+                sender: interaction.user.username,
+                receiver: targetUser.username,
+              }),
+            )
+            .setImage(randomGif)
+            .setFooter({ text: t(locale, 'hug.footer') });
+
+          await interaction.reply({ embeds: [embedAccepted] });
+          return;
+        }
+      }
+
+      // Regular hug when target didn't previously request one
+      const embed = new EmbedBuilder()
+        .setColor('#FFB6C1')
+        .setTitle(
+          t(locale, 'hug.embedTitle', {
+            sender: interaction.user.username,
+            receiver: targetUser.username,
+          }),
+        )
+        .setImage(randomGif)
+        .setFooter({ text: t(locale, 'hug.footer') });
+
+      await interaction.reply({ embeds: [embed] });
+      return;
+    }
   },
 };
