@@ -165,3 +165,40 @@ export function isConnectedInGuild(guildId: string) {
   const s = connections.get(guildId);
   return !!s && !s.connection.destroy;
 }
+
+/**
+ * Disconnect and clean up voice resources for a single guild.
+ * Returns true if a connection was destroyed, false if none existed.
+ */
+export function leaveVoiceInGuild(guildId: string) {
+  const state = connections.get(guildId);
+  if (!state?.connection) {
+    return false;
+  }
+
+  try {
+    if (state.player) {
+      try {
+        state.player.stop();
+      } catch (stopErr) {
+        console.error(`Error stopping player for guild ${guildId}:`, stopErr);
+      }
+    }
+
+    try {
+      state.connection.destroy();
+    } catch (destroyErr) {
+      console.error(`Error destroying connection for guild ${guildId}:`, destroyErr);
+    }
+  } catch (err: unknown) {
+    console.error(
+      `Error leaving voice for guild ${guildId}:`,
+      err instanceof Error ? err.message : String(err),
+    );
+    return false;
+  } finally {
+    connections.delete(guildId);
+  }
+
+  return true;
+}

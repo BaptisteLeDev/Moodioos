@@ -32,7 +32,7 @@ import { readdir } from 'fs/promises';
 import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
-import { joinVoiceChannelSafe, playFileInGuild } from '../services/index.js';
+import { joinVoiceChannelSafe, playFileInGuild, leaveVoiceInGuild } from '../services/index.js';
 
 type MusicRecommendation = {
   name: string;
@@ -138,6 +138,14 @@ export const moodCommand: Command = {
           fr: 'Faire rejoindre le bot dans votre salon vocal',
         }),
     )
+    .addSubcommand((subcommand) =>
+      subcommand
+        .setName('left')
+        .setDescription('Make the bot leave the voice channel')
+        .setDescriptionLocalizations({
+          fr: 'Faire quitter le salon vocal au bot',
+        }),
+    )
     .addSubcommandGroup((group) =>
       group
         .setName('config')
@@ -202,6 +210,9 @@ export const moodCommand: Command = {
 
       if (subcommand === 'join') {
         return handleJoinSubcommand(interaction);
+      }
+      if (subcommand === 'left') {
+        return handleLeftSubcommand(interaction);
       }
 
       if (subcommandGroup === 'config') {
@@ -505,6 +516,49 @@ async function handleJoinSubcommand(interaction: ChatInputCommandInteraction) {
       });
     } catch (replyErr: unknown) {
       console.error('Failed to notify user about join error:', replyErr);
+    }
+  }
+}
+
+/**
+ * Handle /mood left subcommand
+ * Make the bot leave the voice channel in this guild
+ */
+async function handleLeftSubcommand(interaction: ChatInputCommandInteraction) {
+  const locale = getLocale(interaction.locale);
+  await interaction.deferReply({ flags: EPHEMERAL_FLAG });
+
+  try {
+    const guildId = interaction.guildId;
+    if (!guildId) {
+      await interaction.editReply({
+        content: 'Cette commande doit être utilisée dans un serveur.',
+      });
+      return;
+    }
+
+    const left = leaveVoiceInGuild(guildId);
+    if (left) {
+      await interaction.editReply({
+        content: t(locale, 'mood.left.leftSuccess') ?? 'Le bot a quitté le salon vocal.',
+      });
+    } else {
+      await interaction.editReply({
+        content:
+          t(locale, 'mood.left.notConnected') ?? 'Le bot n\u2019est pas connecté au salon vocal.',
+      });
+    }
+  } catch (error: unknown) {
+    const err = error instanceof Error ? error : new Error(String(error));
+    console.error('Error leaving voice channel:', err);
+    try {
+      await interaction.editReply({
+        content:
+          t(locale, 'mood.left.leftError') ??
+          '❌ Une erreur est survenue lors de la déconnexion du bot.',
+      });
+    } catch (replyErr: unknown) {
+      console.error('Failed to notify user about left error:', replyErr);
     }
   }
 }
