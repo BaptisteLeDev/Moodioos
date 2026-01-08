@@ -1,6 +1,7 @@
 {
   "ping": {
     "description": "Test bot latency and response time",
+    "pinging": "🏓 Pinging...",
     "response": "🏓 Pong! Latency: {latency}ms | API Latency: {apiLatency}ms"
   },
   "stats": {
@@ -37,8 +38,12 @@
     "embedTitle": "💕 {sender} sends love to {receiver}!",
     "footer": "Spread the love! 💕"
   },
+  "common": {
+    "mustBeInServer": "This command must be used in a server."
+  },
   "mood": {
     "description": "Get motivation, music recommendations, or voice features",
+    "execError": "An error occurred while processing your request. 😢",
     "want": {
       "description": "Get a random motivational compliment",
       "optionType": "Type of motivation",
@@ -91,9 +96,15 @@
       "joined": "✅ Joined **{channel}**! 🎵",
       "joinError": "❌ Failed to join voice channel. Make sure I have permission!"
     },
+    "left": {
+      "leftSuccess": "✅ The bot has left the voice channel.",
+      "notConnected": "ℹ️ The bot is not connected to any voice channel.",
+      "leftError": "❌ An error occurred while disconnecting the bot."
+    },
     "config": {
       "description": "Configure Moodioos settings for this server",
       "lang": {
+        "setError": "❌ An error occurred while setting the language.",
         "description": "Set the bot's language for this server",
         "optionLanguage": "Language (en or fr)",
         "optionLanguageDesc": "Choose the language for bot responses",

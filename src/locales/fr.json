@@ -1,6 +1,7 @@
 {
   "ping": {
     "description": "Tester la latence et le temps de réponse du bot",
+    "pinging": "🏓 Ping...",
     "response": "🏓 Pong ! Latence : {latency}ms | Latence API : {apiLatency}ms"
   },
   "stats": {
@@ -37,8 +38,12 @@
     "embedTitle": "💕 {sender} envoie de l'amour à {receiver} !",
     "footer": "Répands l'amour ! 💕"
   },
+  "common": {
+    "mustBeInServer": "Cette commande doit être utilisée dans un serveur."
+  },
   "mood": {
     "description": "Obtenir de la motivation, des recommandations musicales ou des fonctionnalités vocales",
+    "execError": "Une erreur s'est produite lors du traitement de votre requête. 😢",
     "want": {
       "description": "Recevoir un compliment motivant aléatoire",
       "optionType": "Type de motivation",
@@ -91,9 +96,15 @@
       "joined": "✅ J'ai rejoint **{channel}** ! 🎵",
       "joinError": "❌ Échec de la connexion au salon vocal. Assurez-vous que j'ai la permission !"
     },
+    "left": {
+      "leftSuccess": "✅ Le bot a quitté le salon vocal.",
+      "notConnected": "ℹ️ Le bot n'est pas connecté à un salon vocal.",
+      "leftError": "❌ Une erreur s'est produite lors de la déconnexion du bot."
+    },
     "config": {
       "description": "Configurer les paramètres de Moodioos pour ce serveur",
       "lang": {
+        "setError": "❌ Une erreur est survenue lors de la définition de la langue.",
         "description": "Définir la langue du bot pour ce serveur",
         "optionLanguage": "Langue (en ou fr)",
         "optionLanguageDesc": "Choisissez la langue pour les réponses du bot",

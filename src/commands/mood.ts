@@ -224,8 +224,9 @@ export const moodCommand: Command = {
     } catch (error: unknown) {
       const e: Error = error instanceof Error ? error : new Error(String(error));
       console.error(`Error executing mood subcommand "${subcommand}":`, e);
+      const locale = getLocale(interaction.locale);
       await interaction.reply({
-        content: 'An error occurred while processing your request. 😢',
+        content: t(locale, 'mood.execError'),
         flags: EPHEMERAL_FLAG,
       });
     }
@@ -532,7 +533,7 @@ async function handleLeftSubcommand(interaction: ChatInputCommandInteraction) {
     const guildId = interaction.guildId;
     if (!guildId) {
       await interaction.editReply({
-        content: 'Cette commande doit être utilisée dans un serveur.',
+        content: t(locale, 'common.mustBeInServer'),
       });
       return;
     }
@@ -594,7 +595,7 @@ async function handleConfigLangSet(interaction: ChatInputCommandInteraction, lan
     const guildId = interaction.guildId;
     if (!guildId) {
       await interaction.editReply({
-        content: 'Error: This command must be used in a server.',
+        content: t(locale, 'common.mustBeInServer'),
       });
       return;
     }
@@ -610,7 +611,7 @@ async function handleConfigLangSet(interaction: ChatInputCommandInteraction, lan
     console.error('Error setting guild language:', err);
     try {
       await interaction.editReply({
-        content: '❌ An error occurred while setting the language.',
+        content: t(locale, 'mood.config.lang.setError'),
       });
     } catch (replyErr: unknown) {
       console.error('Failed to notify user about config error:', replyErr);

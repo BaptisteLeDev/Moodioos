@@ -23,7 +23,10 @@ export const pingCommand: Command = {
   async execute(interaction: ChatInputCommandInteraction | ContextMenuCommandInteraction) {
     if (interaction.isChatInputCommand()) {
       const locale = getLocale(interaction.locale);
-      const sent = await interaction.reply({ content: '🏓 Pinging...', fetchReply: true });
+      const sent = await interaction.reply({
+        content: t(locale, 'ping.pinging'),
+        fetchReply: true,
+      });
       const latency = sent.createdTimestamp - interaction.createdTimestamp;
       const apiLatency = Math.round(interaction.client.ws.ping);
 
