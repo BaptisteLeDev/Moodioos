@@ -123,6 +123,7 @@ Centralized environment configuration using `dotenv`.
 - `DISCORD_TOKEN` - Bot token
 - `DISCORD_APPLICATION_ID` - Application ID
 - `DISCORD_GUILD_ID` - (Optional) Dev guild for fast command deployment
+- `DISCORD_AUTO_DEPLOY_COMMANDS` - (Optional) `true|false` control automatic command deployment on startup and on guild join (default: `true`)
 - `PORT` - API server port
 - `NODE_ENV` - Environment (development/production)
 

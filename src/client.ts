@@ -14,6 +14,8 @@
 
 import {
   Client,
+  REST,
+  Routes,
   GatewayIntentBits,
   Events,
   Collection,
@@ -26,6 +28,8 @@ const EPHEMERAL_FLAG = 64;
 import { config } from './config.js';
 import { Command } from './commands/types.js';
 import { commands as registeredCommands } from './commands/index.js';
+
+const rest = new REST({ version: '10' }).setToken(config.discord.token);
 
 /**
  * Bot Statistics Interface
@@ -142,6 +146,14 @@ export class BotClient extends Client {
     // Bot ready event (fires once when bot connects)
     this.once(Events.ClientReady, this.onReady.bind(this));
 
+    // When the bot joins a new guild, register guild commands so they appear instantly
+    if (config.discord.autoDeployCommands) {
+      // Use a non-async wrapper so we don't pass an async function where a void-return is expected
+      this.on(Events.GuildCreate, (guild) => {
+        void this.onGuildCreate(guild);
+      });
+    }
+
     // Interaction events (slash commands, buttons, etc.)
     this.on(Events.InteractionCreate, (interaction) => {
       void this.handleInteraction(interaction);
@@ -165,8 +177,62 @@ export class BotClient extends Client {
     console.log(`📊 Connected to ${client.guilds.cache.size} guilds`);
     console.log(`👥 Serving ${this.getTotalUsers()} users`);
 
+    // Auto-deploy commands on ready (useful for development / ensuring commands exist)
+    if (config.discord.autoDeployCommands) {
+      void (async () => {
+        try {
+          const commandsPayload = this.commands.map((c) => c.data.toJSON());
+
+          if (config.discord.guildId) {
+            console.log(
+              `🔧 Deploying ${commandsPayload.length} commands to configured guild ${config.discord.guildId} (instant updates)`,
+            );
+            const data = (await rest.put(
+              Routes.applicationGuildCommands(config.discord.applicationId, config.discord.guildId),
+              { body: commandsPayload },
+            )) as import('discord-api-types/v10').RESTPutAPIApplicationGuildCommandsResult;
+            console.log(`✅ Successfully deployed ${data.length} guild commands`);
+          } else {
+            console.log('🌍 Deploying commands globally (may take up to 1 hour to propagate)');
+            const data = (await rest.put(Routes.applicationCommands(config.discord.applicationId), {
+              body: commandsPayload,
+            })) as import('discord-api-types/v10').RESTPutAPIApplicationCommandsResult;
+            console.log(`✅ Successfully deployed ${data.length} global commands`);
+          }
+        } catch (error) {
+          console.error('❌ Error deploying commands on ready:', error);
+        }
+      })();
+    }
+
     // Set bot presence/activity (optional)
     // client.user.setActivity('Listening to /help', { type: ActivityType.Listening });
+  }
+
+  /**
+   * Guild Create Handler
+   *
+   * Registers commands for the newly joined guild so commands appear instantly.
+   *
+   * @param guild - The guild that was added
+   * @private
+   */
+  private async onGuildCreate(guild: import('discord.js').Guild): Promise<void> {
+    try {
+      const commandsPayload = this.commands.map((c) => c.data.toJSON());
+      console.log(
+        `📥 Joined new guild: ${guild.name} (${guild.id}) - registering ${commandsPayload.length} commands...`,
+      );
+
+      const data = (await rest.put(
+        Routes.applicationGuildCommands(config.discord.applicationId, guild.id),
+        { body: commandsPayload },
+      )) as import('discord-api-types/v10').RESTPutAPIApplicationGuildCommandsResult;
+
+      console.log(`✅ Registered ${data.length} commands for ${guild.name}`);
+    } catch (err) {
+      console.error(`❌ Failed to register commands for guild ${guild.id}:`, err);
+    }
   }
 
   /**

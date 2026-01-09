@@ -33,7 +33,16 @@ const envSchema = z.object({
     .string()
     .regex(/^\d{17,19}$/u, 'Discord guild ID must be a numeric snowflake (17–19 digits)')
     .optional(),
-
+  // Whether the bot should automatically deploy slash commands at startup and on guild join
+  DISCORD_AUTO_DEPLOY_COMMANDS: z
+    .preprocess((val) => {
+      // Convert string env values to boolean, default to true unless explicitly 'false'
+      if (typeof val === 'string') {
+        return val.toLowerCase() !== 'false';
+      }
+      return !!val;
+    }, z.boolean())
+    .default(true),
   // API Configuration
   PORT: z.string().default('3001').transform(Number),
   HOST: z.string().default('0.0.0.0'),
@@ -96,6 +105,12 @@ export const config = {
      * If not set, commands are deployed globally (can take up to 1 hour)
      */
     guildId: env.DISCORD_GUILD_ID,
+
+    /**
+     * Whether to automatically deploy slash commands on bot ready and on guild join
+     * Useful to make command deployment opt-in for production environments
+     */
+    autoDeployCommands: env.DISCORD_AUTO_DEPLOY_COMMANDS,
   },
 
   /**
