@@ -1,5 +1,6 @@
 import fs from 'fs/promises';
-import path from 'path';
+import path, { dirname } from 'path';
+import { fileURLToPath } from 'url';
 import crypto from 'crypto';
 
 export type ScheduledMessage = {
@@ -14,6 +15,9 @@ export type ScheduledMessage = {
   createdAt: string;
 };
 
+// __dirname replacement for ESM
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
 const DATA_FILE = path.join(__dirname, '..', 'data', 'scheduled-messages.json');
 
 async function ensureDataFile(): Promise<void> {
