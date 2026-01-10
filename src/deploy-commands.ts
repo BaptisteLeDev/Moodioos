@@ -10,7 +10,15 @@ import type {
 import { config, validateConfig } from './config.js';
 import { commands as registeredCommands } from './commands/index.js';
 
-const commands = registeredCommands.map((c) => c.data.toJSON());
+type CommandJson = { name?: string; integration_types?: unknown } & Record<string, unknown>;
+
+const commands = registeredCommands.map((c) => {
+  // Cast to unknown first to avoid a possibly incompatible conversion from the discord-api types
+  const json = c.data.toJSON() as unknown as CommandJson;
+  // Ensure commands are available when the app is installed to a user (USER_INSTALL)
+  json.integration_types = ['USER_INSTALL'];
+  return json;
+});
 
 const rest = new REST({ version: '10' }).setToken(config.discord.token);
 
