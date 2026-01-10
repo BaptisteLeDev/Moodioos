@@ -176,7 +176,15 @@ export class BotClient extends Client {
     console.log(`✅ Discord Bot Ready! Logged in as ${client.user.tag}`);
     console.log(`📊 Connected to ${client.guilds.cache.size} guilds`);
     console.log(`👥 Serving ${this.getTotalUsers()} users`);
-
+    // Start scheduler for scheduled messages (lightweight JSON-based MVP)
+    void (async () => {
+      try {
+        const { startScheduler } = await import('./services/scheduler.js');
+        startScheduler(this);
+      } catch (err) {
+        console.warn('Scheduler not started:', err);
+      }
+    })();
     // Auto-deploy commands on ready (useful for development / ensuring commands exist)
     if (config.discord.autoDeployCommands) {
       void (async () => {

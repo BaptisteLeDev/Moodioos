@@ -117,5 +117,15 @@
         "currentLanguage": "Langue actuelle du serveur : **{language}**"
       }
     }
+  },
+  "mp": {
+    "sent": "✅ Message envoyé à {target} en MP.",
+    "failed": "❌ Impossible d'envoyer le MP à {target} — il/elle a peut-être désactivé les DMs."
+  },
+  "schedule": {
+    "invalidDate": "❌ Format de date invalide. Utilisez ISO 8601 UTC (ex: 2026-01-15T09:00:00Z).",
+    "scheduled": "✅ Message planifié (ID: {id}) pour être envoyé le {when} UTC.",
+    "failed": "❌ Impossible de planifier le message."
   }
 }
+
