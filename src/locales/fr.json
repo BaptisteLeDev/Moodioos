@@ -86,6 +86,7 @@
       "noSounds": "Aucun son trouvé dans le dossier sounds.",
       "availableSounds": "Fichiers disponibles :\n{list}",
       "soundNotFound": "Son non trouvé : {sound}",
+      "categoryNotFound": "Catégorie non trouvée : {category}",
       "noVoiceState": "Impossible d'accéder à l'état vocal.",
       "notInVoice": "Vous devez être dans un salon vocal pour que je joue un son.",
       "unsupportedFormat": "Format non supporté : {ext}. Seuls .opus/.ogg sont pris en charge.",

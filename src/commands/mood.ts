@@ -103,6 +103,19 @@ export const moodCommand: Command = {
         })
         .addStringOption((option) =>
           option
+            .setName('category')
+            .setDescription('Sound category (optional)')
+            .setDescriptionLocalizations({
+              fr: 'Catégorie de son (optionnel)',
+            })
+            .setRequired(false)
+            .addChoices(
+              { name: '💕 Love', value: 'love' },
+              { name: '💪 Motivation', value: 'motivation' },
+            ),
+        )
+        .addStringOption((option) =>
+          option
             .setName('sound')
             .setDescription('Name of the sound to play (leave empty to list)')
             .setDescriptionLocalizations({
@@ -185,8 +198,9 @@ export const moodCommand: Command = {
       }
 
       if (subcommand === 'play') {
+        const category: string | null = interaction.options.getString('category');
         const sound: string | null = interaction.options.getString('sound');
-        return handlePlaySubcommand(interaction, sound ?? undefined);
+        return handlePlaySubcommand(interaction, category ?? undefined, sound ?? undefined);
       }
 
       if (subcommand === 'join') {
@@ -382,10 +396,11 @@ async function handleSaySubcommand(interaction: ChatInputCommandInteraction, mes
 
 /**
  * Handle /mood play subcommand
+ * - If `category` is provided, filter to that folder (e.g., 'love', 'motivation')
  * - If `soundName` is provided, attempt to play it
  * - Otherwise list available sounds
  */
-async function handlePlaySubcommand(interaction: ChatInputCommandInteraction, soundName?: string) {
+async function handlePlaySubcommand(interaction: ChatInputCommandInteraction, category?: string, soundName?: string) {
   const locale = getLocale(interaction.locale);
   // Defer immediately to avoid interaction timeout
   await interaction.deferReply({ flags: EPHEMERAL_FLAG });
@@ -394,14 +409,40 @@ async function handlePlaySubcommand(interaction: ChatInputCommandInteraction, so
   const distRoot = path.resolve(currentFileDir, '..');
   const soundsDist = path.join(distRoot, 'assets', 'sounds');
   const soundsSrc = path.join(distRoot, '..', 'src', 'assets', 'sounds');
-  const soundsDir = fs.existsSync(soundsDist) ? soundsDist : soundsSrc;
+  let soundsDir = fs.existsSync(soundsDist) ? soundsDist : soundsSrc;
+
+  // If a category is specified, filter to that subfolder
+  if (category) {
+    soundsDir = path.join(soundsDir, category);
+    if (!fs.existsSync(soundsDir)) {
+      await interaction.editReply({
+        content: t(locale, 'mood.play.categoryNotFound', { category }),
+      });
+      return;
+    }
+  }
 
   try {
-    const files = await readdir(soundsDir);
-    const soundFiles = files.filter((f) => {
-      const ext = path.extname(f).toLowerCase();
-      return ['.opus', '.ogg', '.oga'].includes(ext);
-    });
+    // Recursively collect sound files from nested folders (e.g. love/, motivation/)
+    async function collectSoundFiles(dir: string): Promise<string[]> {
+      const entries = await readdir(dir, { withFileTypes: true });
+      const acc: string[] = [];
+      for (const entry of entries) {
+        const fullPath = path.join(dir, entry.name);
+        if (entry.isDirectory()) {
+          const sub = await collectSoundFiles(fullPath);
+          acc.push(...sub);
+        } else {
+          const ext = path.extname(entry.name).toLowerCase();
+          if (['.opus', '.ogg', '.oga'].includes(ext)) acc.push(fullPath);
+        }
+      }
+      return acc;
+    }
+
+    const filesAbs = await collectSoundFiles(soundsDir);
+    // Represent files relative to soundsDir for listing and matching
+    const soundFiles = filesAbs.map((abs) => path.relative(soundsDir, abs));
 
     if (soundFiles.length === 0) {
       await interaction.editReply({
@@ -411,14 +452,53 @@ async function handlePlaySubcommand(interaction: ChatInputCommandInteraction, so
     }
 
     if (!soundName) {
-      // list available sounds
+      // If category is specified without soundName, play a random sound from that category
+      if (category) {
+        const randomSound = soundFiles[Math.floor(Math.random() * soundFiles.length)]!;
+        const match = randomSound;
+        const member = interaction.member;
+        if (!member || !('voice' in member)) {
+          await interaction.editReply({
+            content: t(locale, 'mood.play.noVoiceState'),
+          });
+          return;
+        }
+
+        const voiceChannel = member.voice?.channel;
+        if (!voiceChannel) {
+          await interaction.editReply({
+            content: t(locale, 'mood.play.notInVoice'),
+          });
+          return;
+        }
+
+        const filePath = path.join(soundsDir, match);
+        const ext = path.extname(filePath).toLowerCase();
+        if (!['.opus', '.ogg', '.oga'].includes(ext)) {
+          await interaction.editReply({
+            content: t(locale, 'mood.play.unsupportedFormat', { ext }),
+          });
+          return;
+        }
+
+        await joinVoiceChannelSafe(voiceChannel as VoiceChannel);
+        playFileInGuild(interaction.guildId as string, filePath);
+        await interaction.editReply({
+          content: t(locale, 'mood.play.nowPlaying', { sound: match, channel: voiceChannel.name }),
+        });
+        return;
+      }
+
+      // Otherwise, list available sounds
       const list = soundFiles.map((f) => `- ${f}`).join('\n');
       await interaction.editReply({ content: t(locale, 'mood.play.availableSounds', { list }) });
       return;
     }
 
-    // Attempt to find matching file (allow name without extension)
-    const match = soundFiles.find((f) => f === soundName || path.parse(f).name === soundName);
+    // Attempt to find matching file (allow name without extension or subfolder/name)
+    const match = soundFiles.find(
+      (f) => f === soundName || path.parse(f).name === soundName || f.replace(/\\/g, '/') === soundName,
+    );
     if (!match) {
       await interaction.editReply({
         content: t(locale, 'mood.play.soundNotFound', { sound: soundName }),

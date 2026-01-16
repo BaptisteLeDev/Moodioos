@@ -1,4 +1,4 @@
-import { SlashCommandBuilder, ChatInputCommandInteraction } from 'discord.js';
+import { SlashCommandBuilder, ChatInputCommandInteraction, MessageFlags } from 'discord.js';
 import { Command } from './types.js';
 import { getLocale, t } from '../utils/i18n.js';
 
@@ -21,13 +21,13 @@ export const mpCommand: Command = {
       await target.send(message);
       await interaction.reply({
         content: t(locale, 'mp.sent', { target: target.username }),
-        ephemeral: true,
+        flags: MessageFlags.Ephemeral,
       });
     } catch (err) {
       console.warn('Failed to send DM via /mp:', err);
       await interaction.reply({
         content: t(locale, 'mp.failed', { target: target.username }),
-        ephemeral: true,
+        flags: MessageFlags.Ephemeral,
       });
     }
   },

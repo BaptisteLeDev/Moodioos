@@ -88,6 +88,7 @@
       "noSounds": "No sounds found in the sounds folder.",
       "availableSounds": "Available files:\n{list}",
       "soundNotFound": "Sound not found: {sound}",
+      "categoryNotFound": "Category not found: {category}",
       "noVoiceState": "Unable to access voice state.",
       "notInVoice": "You must be in a voice channel for me to play a sound.",
       "unsupportedFormat": "Unsupported format: {ext}. Only .opus/.ogg are supported.",

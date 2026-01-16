@@ -1,4 +1,4 @@
-import { SlashCommandBuilder, ChatInputCommandInteraction } from 'discord.js';
+import { SlashCommandBuilder, ChatInputCommandInteraction, MessageFlags } from 'discord.js';
 import { Command } from './types.js';
 import { getLocale, t } from '../utils/i18n.js';
 import { addScheduledMessage } from '../services/scheduled-messages.js';
@@ -28,7 +28,7 @@ export const scheduleCommand: Command = {
     // Validate ISO date
     const parsed = Date.parse(datetime);
     if (Number.isNaN(parsed)) {
-      await interaction.reply({ content: t(locale, 'schedule.invalidDate'), ephemeral: true });
+      await interaction.reply({ content: t(locale, 'schedule.invalidDate'), flags: MessageFlags.Ephemeral });
       return;
     }
 
@@ -45,11 +45,11 @@ export const scheduleCommand: Command = {
       });
       await interaction.reply({
         content: t(locale, 'schedule.scheduled', { id: record.id, when: iso }),
-        ephemeral: true,
+        flags: MessageFlags.Ephemeral,
       });
     } catch (err) {
       console.error('Failed to schedule message:', err);
-      await interaction.reply({ content: t(locale, 'schedule.failed'), ephemeral: true });
+      await interaction.reply({ content: t(locale, 'schedule.failed'), flags: MessageFlags.Ephemeral });
     }
   },
 };
